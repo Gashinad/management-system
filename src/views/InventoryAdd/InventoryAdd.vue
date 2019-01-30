@@ -1,16 +1,14 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div class="inventoryadd">
+        这是添加库存页面
+    </div>
 </template>
 <script>
-
-// import "@/styles/common.less"
 export default {
-  
+    
 }
 </script>
-
 <style lang="less">
 
 </style>
+

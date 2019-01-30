@@ -1,16 +1,15 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div class="saleslist">
+        这是销售列表页面
+    </div>
 </template>
 <script>
-
-// import "@/styles/common.less"
 export default {
-  
+    
 }
 </script>
-
 <style lang="less">
 
 </style>
+
+

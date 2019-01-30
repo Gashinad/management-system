@@ -1,16 +1,15 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div class="productmanage">
+        这是商品管理页面
+    </div>
 </template>
 <script>
-
-// import "@/styles/common.less"
 export default {
-  
+    
 }
 </script>
-
 <style lang="less">
 
 </style>
+
+

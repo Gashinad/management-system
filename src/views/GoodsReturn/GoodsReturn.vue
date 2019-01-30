@@ -1,16 +1,14 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div class="goodsreturn">
+        这是商品退货页面
+    </div>
 </template>
 <script>
-
-// import "@/styles/common.less"
 export default {
-  
+    
 }
 </script>
-
 <style lang="less">
 
 </style>
+
