@@ -10,10 +10,14 @@
                 <el-header>
                     <h1><i class="el-icon-menu">华联超市管理系统</i></h1>
                 </el-header>
+                <!-- 右侧中间 -->
                 <el-main>
                     <router-view></router-view>
                 </el-main>
-                <el-footer>Footer</el-footer>
+                <!-- 右侧尾部 -->
+                <el-footer>
+                    &copy; CopyRight 2018 华联超市管理系统
+                </el-footer>
             </el-container>
         </el-container>
     </div>
@@ -51,6 +55,11 @@ export default {
             text-indent: 30px;
             text-align: left;
             margin: 0;
+        }
+        .el-footer{
+            margin: 0;
+            text-indent: 30px;
+            text-align: left;
         }
     }
 
