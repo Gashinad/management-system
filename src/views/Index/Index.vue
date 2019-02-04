@@ -8,7 +8,7 @@
             <!-- 右侧内容页 -->
             <el-container>
                 <el-header>
-                    <h1><i class="el-icon-menu">华联超市管理系统</i></h1>
+                    <Top></Top>
                 </el-header>
                 <!-- 右侧中间 -->
                 <el-main>
@@ -16,7 +16,7 @@
                 </el-main>
                 <!-- 右侧尾部 -->
                 <el-footer>
-                    &copy; CopyRight 2018 华联超市管理系统
+                    <Bottom></Bottom>
                 </el-footer>
             </el-container>
         </el-container>
@@ -25,9 +25,13 @@
 
 <script>
 import Nav from "@/components/Nav/Nav.vue"
+import Top from "@/components/Top/Top.vue"
+import Bottom from "@/components/Bottom/Bottom.vue"
 export default {
     components:{
-        Nav
+        Nav,
+        Top,
+        Bottom
     }
 };
 </script>
@@ -51,8 +55,8 @@ export default {
       text-align: center;
     }
     .el-container{
-        .el-header > h1{
-            text-indent: 30px;
+        .el-header > .top > h1{
+            // text-indent: 30px;
             text-align: left;
             margin: 0;
         }
