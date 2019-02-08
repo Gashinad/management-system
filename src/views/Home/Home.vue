@@ -30,7 +30,7 @@
                                     <el-table-column
                                         prop="product"
                                         label="商品名称"
-                                        width="180">
+                                        width="280">
                                     </el-table-column>
 
                                     <el-table-column
@@ -42,7 +42,7 @@
                                     <el-table-column
                                         prop="date"
                                         label="日期"
-                                        width="100">
+                                        width="200">
                                     </el-table-column>
                                 </el-table>
                             </div>
@@ -154,7 +154,7 @@ export default {
             .el-row{
                 .el-col-10{
                     .el-card{
-                        width: 420px;
+                        width: 620px;
                     }
                 }
             }

@@ -59,7 +59,7 @@ export default {
       height: 60px;
       line-height: 60px;
       margin-right: 20px;
-      margin-left: 900px;
+      margin-left: 1450px;
       .avatar {
         vertical-align: top;
         display: inline-block;
