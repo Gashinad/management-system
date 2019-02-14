@@ -1,194 +1,213 @@
 <template>
-    <div class="productmanage">
-                <el-card class="box-card">
-            <div slot="header" class="clearfix">
-                <span>系统信息</span>
+    <div class="product-manage">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span>商品管理</span>
+        </div>
+        <div class="text item">
+          <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+            <el-form-item label="所属分类">
+                <el-select v-model="searchForm.cateName" placeholder="所属分类">
+                    <el-option label="全部" value="全部"></el-option>
+                    <el-option label="酒水类" value="酒水类"></el-option>
+                    <el-option label="水果类" value="水果类"></el-option>
+                    <el-option label="电子类" value="电子类"></el-option>
+                    <el-option label="食品类" value="食品类"></el-option>
+                    <el-option label="生活用品" value="生活用品"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="关键字">
+                <el-input v-model="searchForm.keyWord" placeholder="商品名称或条形码"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary">查询</el-button>
+            </el-form-item>
+          </el-form>
+
+          <hr>
+
+            <el-table
+              :data="tableData2"
+              style="width: 100%"
+              :row-class-name="tableRowClassName">
+              <el-table-column
+                prop="productNum"
+                label="商品条形码"
+                width="130">
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                label="商品名称"
+                width="135">
+              </el-table-column>
+              <el-table-column
+                prop="productLei"
+                label="所属分类">
+              </el-table-column>
+              <el-table-column
+                prop="salePrice"
+                label="售价(元)">
+              </el-table-column>
+              <el-table-column
+                prop="cxPrice"
+                label="促销价(元)">
+              </el-table-column>
+              <el-table-column
+                prop="scPrice"
+                label="市场价(元)">
+              </el-table-column>
+              <el-table-column
+                prop="kucun"
+                label="库存(元)">
+              </el-table-column>
+              <el-table-column
+                prop="allMoney"
+                label="库存总额(元)">
+              </el-table-column>
+              <el-table-column
+                prop="saleMoney"
+                label="销售总额(元)">
+              </el-table-column>
+              <el-table-column
+                prop="confuse"
+                label="管理"
+                width="120">
+                <el-button type="primary" icon="el-icon-edit" circle></el-button>
+                <el-button type="danger" icon="el-icon-delete" circle></el-button>
+              </el-table-column>
+            </el-table>
+
+            <div class="block">
+              <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage4"
+                :page-sizes="[100, 200, 300, 400]"
+                :page-size="100"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="1000">
+              </el-pagination>
             </div>
-            <div class="text item">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                    <!-- 所属分类 -->
-                    <el-form-item label="所属分类" prop="region">
-                        <el-select v-model="ruleForm.region" placeholder="请选择分类">
-                        <el-option label="分类一" value="海飞丝"></el-option>
-                        <el-option label="分类二" value="五粮液"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <!-- 商品条形码 -->
-                    <el-form-item label="商品条形码" prop="productNum">
-                        <el-input v-model="ruleForm.productNum"></el-input>
-                        <el-button type="success" @click="randomNum()">生成条形码</el-button>
-                    </el-form-item>
-                    <!-- 商品名称 -->
-                    <el-form-item label="商品名称" prop="name">
-                        <el-input v-model="ruleForm.name"></el-input>
-                    </el-form-item>
-                    <!-- 商品售价 -->
-                    <el-form-item label="商品售价" prop="price">
-                        <el-input v-model="ruleForm.price"></el-input><span>元</span>
-                    </el-form-item>
-                    <!-- 市场价 -->
-                    <el-form-item label="市场价" prop="marketPrice">
-                        <el-input v-model="ruleForm.marketPrice"></el-input><span>元</span>
-                        <p>默认市场价为售价的1.2倍</p>
-                    </el-form-item>
-                    <!-- 商品进价 -->
-                    <el-form-item label="商品进价" prop="prchasePrice">
-                        <el-input v-model="ruleForm.prchasePrice"></el-input><span>元</span>
-                    </el-form-item>
-                    <!-- 入库数量 -->
-                    <el-form-item label="入库数量" prop="storageNum">
-                        <el-input v-model="ruleForm.storageNum"></el-input><br>
-                        <p>记量商品单位为千克</p>
-                    </el-form-item>
-                    <!-- 商品重量 -->
-                    <el-form-item label="商品重量" prop="productWeight">
-                        <el-input v-model="ruleForm.productWeight"></el-input>
-                    </el-form-item>
-                    <!-- 商品单位 -->
-                    <el-form-item label="商品单位" prop="productUnit">
-                        <el-input v-model="ruleForm.productUnit"></el-input>
-                    </el-form-item>
-                    <!-- 会员优惠 -->
-                    <el-form-item label="会员优惠">
-                        <el-radio-group v-model="ruleForm.resource">
-                        <el-radio label="享受"></el-radio>
-                        <el-radio label="不享受"></el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <!-- 是否促销 -->
-                    <el-form-item label="是否促销">
-                        <el-radio-group v-model="ruleForm.resource">
-                        <el-radio label="启用"></el-radio>
-                        <el-radio label="禁用"></el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <!-- 商品简介 -->
-                    <el-form-item label="商品简介" prop="desc">
-                        <el-input type="textarea" v-model="ruleForm.desc"></el-input><br>
-                        <p>不超过200个汉字</p>
-                    </el-form-item>
-
-                    <el-form-item>
-                        <el-button type="primary" @click="submitForm('ruleForm')">添加</el-button>
-                        <el-button @click="resetForm('ruleForm')">重置</el-button>
-                    </el-form-item>
-                </el-form>
-            </div>
-        </el-card>
-
-
+        </div>
+      </el-card>
     </div>
 </template>
 <script>
+// 引入头部组件 和 尾部组件
+import Top from "@/components/Top/Top.vue";
+import Bottom from "@/components/Bottom/Bottom.vue";
+
+// 暴露出去 暴露的是当前组件的vue实例对象（new Vue({  })）
 export default {
+  // 注册组件
+  components: {
+    Top,
+    Bottom
+  },
+  // 数据
   data() {
-    //验证是否是数字
-    const checkNum = (rule, value, callback) => {
-      var reg = /^[0-9]+.?[0-9]*$/;
-      if (!reg.test(value)) {
-        callback(new Error("价格必须是数字"));
-      } else {
-        callback();
-      }
-    };
     return {
-      ruleForm: {
-        name: "",
-        region: "",
-        desc: "",
-        productNum: "",
-        price: "",
-        marketPrice: "",
-        prchasePrice: "",
-        storageNum: "",
-        productWeight: "",
-        productUnit: "",
-        resource:""
+      searchForm: {
+        cateName: "",
+        keyWord: ""
       },
-      rules: {
-        name: [
-          { required: true, message: "请输入商品名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
-        ],
-        region: [
-          { required: true, message: "请选择分类", trigger: "change" }
-        ],
-        desc: [
-          { required: true, message: "请填写商品简介", trigger: "blur" },
-          { min: 0, max: 200, message:'不能超过200个汉字',trigger:'change'}
-        ],
-        productNum: [
-          { required: true, message: "请生成条形码", trigger: "change" }
-        ],
-        price: [{ required: true, validator: checkNum, trigger: "change" }],
-        marketPrice: [{ validator: checkNum, trigger: "change" }],
-        prchasePrice: [{ validator: checkNum, trigger: "change" }],
-        storageNum: [{ validator: checkNum, trigger: "change" }]
-      }
+      tableData2: [
+        {
+          productNum: "6222626595445",
+          name: "海飞丝去屑洗发水",
+          productLei: "海飞丝",
+          salePrice: "10.00",
+          cxPrice: "8.00",
+          scPrice: "12.00",
+          kucun: "0(缺)",
+          allMoney: "0",
+          saleMoney: "280.00"
+        },
+        {
+          productNum: "6222626595445",
+          name: "我的优乐美",
+          productLei: "优乐美",
+          salePrice: "4.00",
+          cxPrice: "3.00",
+          scPrice: "5.00",
+          kucun: "10",
+          allMoney: "40.00",
+          saleMoney: "560.00"
+        },
+        {
+          productNum: "6222626595445",
+          name: "茅台酒",
+          productLei: "茅台",
+          salePrice: "1000.00",
+          cxPrice: "800.00",
+          scPrice: "1200.00",
+          kucun: "8",
+          allMoney: "8000.00",
+          saleMoney: "12000.00"
+        },
+        {
+          productNum: "6222626595445",
+          name: "龙凤呈祥2",
+          productLei: "龙凤呈祥",
+          salePrice: "15.00",
+          cxPrice: "12.00",
+          scPrice: "18.00",
+          kucun: "20",
+          allMoney: "300.00",
+          saleMoney: "780.00"
+        }
+      ],
+      currentPage1: 5,
+      currentPage2: 5,
+      currentPage3: 5,
+      currentPage4: 4
     };
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert("添加成功!可以发送数据给后端");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex === 1) {
+        return "warning-row";
+      } else if (rowIndex === 3) {
+        return "success-row";
+      }
+      return "";
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
     },
-
-    randomNum() {
-      let str = Math.random()
-        .toString()
-        .substr(2, 13);
-      this.ruleForm.productNum = str;
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
     }
   }
 };
 </script>
 
-
 <style lang="less">
-.productmanage {
+.product-manage {
   .el-card {
-    border-radius: 8px;
     .el-card__header {
       text-align: left;
       font-size: 20px;
-      font-weight: 800;
-      background-color: #ccc;
+      font-weight: 600;
+      background-color: #f1f1f1;
     }
-  }
-  .el-form {
-    width: 800px;
-    .el-form-item {
-      .el-form-item__content {
-        text-align: left;
-        .el-select {
-          display: block;
+    .el-card__body {
+      .text {
+        .el-form {
+          text-align: left;
         }
-        .el-input {
-          display: block;
-          width: 400px;
-          float: left;
-        }
-        p{
-            margin: 0;
-            color: #ccc;
-        }
-        .el-button {
-          float: left;
-          margin-left: 10px;
+        .el-pagination {
+          margin-top: 20px;
+          text-align: left;
+          font-size: 16px;
         }
       }
     }
   }
 }
 </style>
+
+
+
 
 
