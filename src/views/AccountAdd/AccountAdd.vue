@@ -19,8 +19,8 @@
                             <el-input type="text" v-model="addForm.checkPwd" autocomplete="off"></el-input>
                         </el-form-item>
 
-                        <el-form-item label="选择用户组" prop="userGroup">
-                            <el-select v-model="addForm.userGroup" placeholder="请选择用户组">
+                        <el-form-item label="选择用户组" prop="usergroup">
+                            <el-select v-model="addForm.usergroup" placeholder="请选择用户组">
                             <el-option label="普通用户" value="普通用户"></el-option>
                             <el-option label="高级管理员" value="高级管理员"></el-option>
                             </el-select>
@@ -36,7 +36,9 @@
     </div>
 </template>
 
+
 <script>
+import qs from 'qs';
 export default {
   data() {
     //验证密码的函数
@@ -67,7 +69,7 @@ export default {
         username: "",
         password: "",
         checkPwd: "",
-        userGroup:""
+        usergroup:""
       },
       rules: {
         username: [
@@ -76,7 +78,7 @@ export default {
         ],
         password: [{ required: true, validator: checkPass, trigger: "blur" }],
         checkPwd: [{ required: true, validator: checkPass2, trigger: "blur" }],
-        userGroup:[{ required: true, message:"请选择用户组", trigger:"change"}]
+        usergroup:[{ required: true, message:"请选择用户组", trigger:"change"}]
       }
     };
   },
@@ -84,11 +86,35 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("前端验证成功！可以发送数据给后端");
-          //跳转到后端首页
-          this.$router.push("/accountmanage");
+          //收集用户输入的所有账号数据
+          let params ={
+            username:this.addForm.username,
+            password:this.addForm.password,
+            usergroup:this.addForm.usergroup
+          };
+
+
+          this.axios.post('http://127.0.0.1:666/account/accountadd',qs.stringify(params))
+          .then(response => {
+            let {error_code,reason}=response.data;
+            //根据后端响应的数据判断
+            if(error_code === 0){
+              this.$message({
+                type:'success',
+                message:reason
+              })
+              //跳转到账号管理页面
+              this.$router.push('/accountmanage');
+            }else{
+              this.$message.error(reason)
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+
         } else {
-          alert("前端验证失败！不能发送数据给后端");
+          //前端验证失败
           return false;
         }
       });

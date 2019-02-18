@@ -28,13 +28,29 @@
 export default {
   data() {
     return {
-      username: "admin"
+      username: ""
     };
   },
   methods: {
     // 点击下拉框选项 触发函数
-    handleCommand(command) {}
+    handleCommand(command) {
+      if(command === 'logout'){
+        //清除token和username
+        window.localStorage.removeItem('token');
+
+        this.$message({
+          type:'success',
+          message:'退出登录成功！欢迎回来！'
+        })
+
+        //跳转到登录页面
+        this.$router.push('/login');
+      }
+    }
   },
+  created(){
+    this.username = window.localStorage.getItem('username');
+  }
 };
 </script>
 <style lang="less">

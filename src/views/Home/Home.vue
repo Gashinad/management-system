@@ -49,7 +49,7 @@
                         </el-card>
                    </el-col>
 
-                   <el-col :span="14">
+                   <el-col :span="10">
                         <el-card class="box-card">
                             <div slot="header" class="clearfix">
                                 <span>缺货的商品</span>

@@ -27,9 +27,19 @@
           <hr>
 
             <el-table
+              ref="multipleTable"
               :data="tableData2"
+              tooltip-effect="dark"
               style="width: 100%"
-              :row-class-name="tableRowClassName">
+              :row-class-name="tableRowClassName"
+              @selection-change="handleSelectionChange"
+              >
+              <!-- 单选框 -->
+              <el-table-column
+              type="selection"
+              width="40">
+              </el-table-column>
+
               <el-table-column
                 prop="productNum"
                 label="商品条形码"
@@ -41,7 +51,7 @@
                 width="135">
               </el-table-column>
               <el-table-column
-                prop="productLei"
+                prop="region"
                 label="所属分类">
               </el-table-column>
               <el-table-column
@@ -53,12 +63,12 @@
                 label="促销价(元)">
               </el-table-column>
               <el-table-column
-                prop="scPrice"
+                prop="scprice"
                 label="市场价(元)">
               </el-table-column>
               <el-table-column
-                prop="kucun"
-                label="库存(元)">
+                prop="inventory"
+                label="库存">
               </el-table-column>
               <el-table-column
                 prop="allMoney"
@@ -68,26 +78,64 @@
                 prop="saleMoney"
                 label="销售总额(元)">
               </el-table-column>
-              <el-table-column
-                prop="confuse"
-                label="管理"
-                width="120">
-                <el-button type="primary" icon="el-icon-edit" circle></el-button>
-                <el-button type="danger" icon="el-icon-delete" circle></el-button>
+              <!-- 操作 -->
+              <el-table-column label="操作" width="200">
+                  <template slot-scope="scope">
+                      <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleEdit(scope.row.id)">
+                          <i class="el-icon-edit"></i> 编辑
+                      </el-button>
+                      <el-button
+                      size="mini"
+                      type="danger"
+                      @click="handleDelete(scope.row.id)">
+                          <i class="el-icon-delete"></i>  删除
+                      </el-button>
+                  </template>
               </el-table-column>
             </el-table>
 
-            <div class="block">
+            <div style="margin-top: 20px; text-align: left;">
               <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page="currentPage4"
-                :page-sizes="[100, 200, 300, 400]"
-                :page-size="100"
+                :current-page="currentPage"
+                :page-sizes="[1, 3, 5, 10]"
+                :page-size="pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="1000">
+                :total="total">
               </el-pagination>
             </div>
+
+            <!-- 批量删除按钮 & 取消选择按钮 -->
+            <div style="margin-top: 20px; text-align: left;">
+              <el-button @click="batchDelete">批量删除</el-button>
+              <el-button @click="cancelSelect()">取消选择</el-button>
+            </div>
+            <!-- 修改数据模态框 -->
+            <el-dialog title="账号管理" width="500px" :visible.sync="flag">
+              <el-form :model="editForm" label-width="60px">
+                <el-form-item label="用户名" prop="username">
+                  <el-input style="width:280px;" type="text" v-model="editForm.name" autocomplete="off"></el-input>
+                </el-form-item>
+
+                <el-form-item label="用户组" prop="region">
+                  <el-select style="width:280px;" v-model="editForm.region" placeholder="请选择用户组">
+                    <el-option label="海飞丝" value="海飞丝"></el-option>
+                    <el-option label="优乐美" value="优乐美"></el-option>
+                    <el-option label="茅台" value="茅台"></el-option>
+                    <el-option label="龙凤呈祥" value="龙凤呈祥"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-form>
+
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="flag = false">取 消</el-button>
+                <el-button type="primary" @click="saveEdit">确 定</el-button>
+              </div>
+            </el-dialog>
         </div>
       </el-card>
     </div>
@@ -96,6 +144,7 @@
 // 引入头部组件 和 尾部组件
 import Top from "@/components/Top/Top.vue";
 import Bottom from "@/components/Bottom/Bottom.vue";
+import qs from 'qs';
 
 // 暴露出去 暴露的是当前组件的vue实例对象（new Vue({  })）
 export default {
@@ -111,59 +160,207 @@ export default {
         cateName: "",
         keyWord: ""
       },
-      tableData2: [
-        {
-          productNum: "6222626595445",
-          name: "海飞丝去屑洗发水",
-          productLei: "海飞丝",
-          salePrice: "10.00",
-          cxPrice: "8.00",
-          scPrice: "12.00",
-          kucun: "0(缺)",
-          allMoney: "0",
-          saleMoney: "280.00"
-        },
-        {
-          productNum: "6222626595445",
-          name: "我的优乐美",
-          productLei: "优乐美",
-          salePrice: "4.00",
-          cxPrice: "3.00",
-          scPrice: "5.00",
-          kucun: "10",
-          allMoney: "40.00",
-          saleMoney: "560.00"
-        },
-        {
-          productNum: "6222626595445",
-          name: "茅台酒",
-          productLei: "茅台",
-          salePrice: "1000.00",
-          cxPrice: "800.00",
-          scPrice: "1200.00",
-          kucun: "8",
-          allMoney: "8000.00",
-          saleMoney: "12000.00"
-        },
-        {
-          productNum: "6222626595445",
-          name: "龙凤呈祥2",
-          productLei: "龙凤呈祥",
-          salePrice: "15.00",
-          cxPrice: "12.00",
-          scPrice: "18.00",
-          kucun: "20",
-          allMoney: "300.00",
-          saleMoney: "780.00"
-        }
-      ],
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4
+      tableData2: [],
+      flag:false,
+      editForm:{
+        name:"",
+        region:""
+      },
+      editId:"",
+      selectionProduct:[],
+      currentPage:1,
+      total:0,
+      pageSize:3
     };
   },
+  //生命周期
+  created(){
+      //调用商品列表数据
+      this.getProductListBypage();
+    },
   methods: {
+    // //获取所有商品列表数据
+    // getProductList(){
+    //   //发送请求查询所有数据
+    //   this.axios.get('http://127.0.0.1:666/product/productlist')
+    //   .then(response=>{
+    //     this.tableData2 = response.data;
+    //   })
+    //   .catch(err=>{
+    //     console.log(err)
+    //   })
+    // },
+
+    //通过分页获取所有商品数据
+    getProductListBypage(){
+      //传入当前页和每页显示条数
+      let pageSize = this.pageSize;
+      let currentPage = this.currentPage;
+      //发送axios请求
+      this.axios.get('http://127.0.0.1:666/product/productlistbypage',{
+        params:{
+          pageSize,
+          currentPage
+        }
+      })
+      .then(response=>{
+        //接收后端返回的数据
+        let {total ,data} = response.data;
+        this.total = total;
+        this.tableData2 = data;
+        //判断是否有data
+        if(!data.length && this.currentPage !== 1){
+          this.currentPage = this.currentPage - 1;
+          //在调用自己
+          this.getProductListBypage();
+        }
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getProductListBypage();      
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getProductListBypage();
+    },
+    handleSelectionChange(val){
+      this.selectionProduct = val;
+    },
+    handleDelete(id){
+      this.$confirm('你确定要删除吗？','提示',{
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+      .then(()=>{
+        this.axios.get(`http://127.0.0.1:666/product/productdel?id=${id}`)
+        .then(response=>{
+          //接收后端返回的数据对象
+          let {error_code,reason} = response.data;
+          //判断是成功还是失败
+          if(error_code === 0){
+            this.$message({
+              type:'success',
+              message:reason
+            })
+            //刷新列表
+            this.getProductListBypage();
+          }else{
+            this.$message.error(reason)
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      })
+      .catch(()=>{
+        this.$message({
+          type:"info",
+          message:"已取消删除"
+        })
+      })
+    },
+    //修改商品数据 回填数据
+    handleEdit(id){
+      // 保存原来的id
+      this.editId = id;
+      //弹出模态框
+      this.flag = true;
+      //发送请求跟后台
+      this.axios.get(`http://127.0.0.1:666/product/productedit?id=${id}`)
+      .then(response=>{
+        //接收后端返回的数据
+        let data = response.data[0];
+        this.editForm.name = data.name;
+        this.editForm.region = data.region;
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
+    //保存修改后的数据
+    saveEdit(){
+      //定义变量保存要发送的数据
+      let params = {
+        name:this.editForm.name,
+        region:this.editForm.region,
+        editId:this.editId
+      }
+
+      //修改后的数据跟 原来的id发送给后端
+      this.axios.post('http://127.0.0.1:666/product/saveproductedit',qs.stringify(params))
+      .then(response=>{
+        // 接收后端返回的数据
+        let {error_code,reason} = response.data;
+        //判断
+        if(error_code === 0){
+          this.$message({
+            type:'success',
+            message:reason
+          })
+          //关闭模态框
+          this.flag = false;
+          //刷新列表
+          this.getProductListBypage();
+        }else{
+          this.$message.error(reason)
+        }
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
+    //取消选择
+    cancelSelect(){
+      this.$refs.multipleTable.clearSelection();      
+    },
+    //批量删除
+    batchDelete(){
+      //获取所有被选中的商品数据的id
+      let selectionId = this.selectionProduct.map(v => v.id);
+
+
+      this.$confirm("你确定要删除吗？", "删除提示", {
+        confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+        .then(()=>{
+          //发送axios请求 把要被删除的id发送给后端
+          this.axios.get('http://127.0.0.1:666/product/batchdelete',{
+            params:{
+              selectionId
+            }
+          })
+          .then(response=>{
+            let {error_code,reason} = response.data;
+            //判断
+            if(error_code === 0){
+              this.$message({
+                type:'success',
+                message:reason
+              });
+              //刷新列表
+              this.getProductListBypage();
+            }else{
+              this.$message.error(reason)
+            }
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        })
+        .catch(()=>{
+          this.$message({
+            type:'info',
+            message:'已取消删除'
+          })
+        })
+    },
     tableRowClassName({ row, rowIndex }) {
       if (rowIndex === 1) {
         return "warning-row";
@@ -172,12 +369,6 @@ export default {
       }
       return "";
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    }
   }
 };
 </script>

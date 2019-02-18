@@ -27,6 +27,7 @@
 
 <script>
 // import "@/styles/common.less"
+import qs from 'qs';
 export default {
     data() {
       //验证密码的函数
@@ -76,9 +77,38 @@ export default {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('前端验证成功！可以发送数据给后端');
-            //跳转到后端首页
-            this.$router.push("/");
+            //收集账号和密码
+            let params = {
+              username:this.loginForm.username,
+              password:this.loginForm.password
+            };
+            //发送ajax到后台
+            this.axios.post('http://127.0.0.1:666/login/checklogin',qs.stringify(params))
+              .then(response=>{
+                //接收后端返回的数据
+                let {error_code,reason,token,username} = response.data;
+                //判断
+                if(error_code === 0){
+                  //将token存入浏览器的本地存储中
+                  window.localStorage.setItem('token',token);
+                  //把用户名存入本地存储中
+                  window.localStorage.setItem('username',username);
+
+                  //成功的提示信息
+                  this.$message({
+                    type:'success',
+                    message:reason
+                  });
+                  //跳转到后端首页
+                  this.$router.push('/');
+                }else{
+                  //失败的提示信息
+                  this.$message.error(reason);
+                }
+              })
+              .catch(err=>{
+                console.log(err)
+              })
 
           } else {
             alert('前端验证失败！不能发送数据给后端');
